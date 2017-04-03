@@ -1,0 +1,2 @@
+class SecretQuestion < ApplicationRecord
+end

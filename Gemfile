@@ -41,8 +41,8 @@ gem 'activeadmin', github: 'activeadmin'
 gem 'devise'
 gem 'cancan' # or cancancan
 gem 'activemodel-serializers-xml', github: 'rails/activemodel-serializers-xml'
-gem 'draper'
-gem 'pundit'
+# gem 'draper'
+# gem 'pundit'
 
 gem 'sidekiq'
 gem 'redis'
@@ -51,6 +51,14 @@ gem 'redis-namespace'
 
 gem 'figaro'
 gem 'foreman'
+
+gem 'grape'
+# gem 'enumerize'
+
+
+gem 'twilio-ruby'
+gem 'phonelib'
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

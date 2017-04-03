@@ -5,7 +5,7 @@ class CreateKeypads < ActiveRecord::Migration[5.0]
       t.string :password
       t.string :code
       t.string :status
-      t.belongs_to :admin, foreign_key: true
+      t.integer :admin_id
 
       t.timestamps
     end
