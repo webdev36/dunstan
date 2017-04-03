@@ -41,4 +41,4 @@ production:
   <<: *default
   database: dunstan_production
   username: dunstan
-  password: <%= ENV['DUNSTAN_DATABASE_PASSWORD'] %>
+  password: admin123
