@@ -1,5 +1,5 @@
 ActiveAdmin.register Keypad, as: "Keypad" do
-  permit_params :email, :password, :password_confirmation, :keypad_id
+  permit_params :number, :password, :code, :status, :admin_id
   index do
     selectable_column
     id_column
@@ -19,7 +19,7 @@ ActiveAdmin.register Keypad, as: "Keypad" do
       f.input :password
       f.input :code
       f.input :status
-      f.input :admin_id, as: :select, collection: User.admins.map { |admin| [admin.email, admin.id] }
+      f.input :admin_id, as: :select, collection: User.admins.map { |admin| [admin.phone_number, admin.id] }
     end
     f.actions
   end
