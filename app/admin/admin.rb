@@ -1,8 +1,8 @@
-ActiveAdmin.register User, as: "User" do
+ActiveAdmin.register User, as: "Admin" do
   permit_params :email, :phone_number, :user_type, :keypad_number, :keypad_code, :keypad_password
   controller do
     def scoped_collection
-      super.users
+      super.admins
     end
   end
   index do
@@ -23,11 +23,12 @@ ActiveAdmin.register User, as: "User" do
       f.input :phone_number
       # f.input :password
       # f.input :password_confirmation
-      f.input :keypad_id, as: :select, collection: Keypad.all.map{|keypad| [keypad.number, keypad.id]}
+      # f.input :keypad_id
       f.input :user_type
-      # f.input :keypad_number
-      # f.input :keypad_code
-      # f.input :keypad_password
+      f.input :keypad_number
+      f.input :keypad_code
+      f.input :keypad_password
+
     end
     f.actions
   end

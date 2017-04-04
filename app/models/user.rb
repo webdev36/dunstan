@@ -25,8 +25,8 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  # devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
+  attr_accessor :password, :password_confirmation
 
   belongs_to :keypad, inverse_of: :users
   has_many :keypads, class_name: "Keypad", foreign_key: 'admin_id'
@@ -38,7 +38,6 @@ class User < ApplicationRecord
   scope :users, -> { where( user_type: 'user') }
 
   attr_accessor :skip_password_validation
-  before_save :set_password
   after_create :set_keypad
 
   enum user_type: [:user, :admin]
@@ -46,11 +45,6 @@ class User < ApplicationRecord
 
   def is_admin
     user_type == "admin"
-  end
-
-  def set_password
-    self.password = self.phone_number
-    self.password_confirmation = self.phone_number
   end
 
   def set_keypad
