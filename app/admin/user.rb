@@ -1,5 +1,5 @@
 ActiveAdmin.register User, as: "User" do
-  permit_params :email, :phone_number, :user_type, :keypad_number, :keypad_code, :keypad_password
+  permit_params :email, :first_name, :last_name, :phone_number, :user_type, :keypad_id
   controller do
     def scoped_collection
       super.users
@@ -20,6 +20,8 @@ ActiveAdmin.register User, as: "User" do
   form do |f|
     f.inputs "Admin Details" do
       f.input :email
+      f.input :first_name
+      f.input :last_name
       f.input :phone_number
       # f.input :password
       # f.input :password_confirmation
