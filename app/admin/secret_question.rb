@@ -7,7 +7,7 @@ ActiveAdmin.register SecretQuestion, as: "SecretQuestion" do
   # end
   index do
     selectable_column
-    id_column
+    # id_column
     column :question
     actions
   end

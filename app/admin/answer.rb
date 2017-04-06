@@ -7,7 +7,7 @@ ActiveAdmin.register Answer, as: "Answer" do
   # end
   index do
     selectable_column
-    id_column
+    # id_column
     column :user_id
     column :answer
     actions

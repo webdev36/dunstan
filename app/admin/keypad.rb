@@ -2,7 +2,7 @@ ActiveAdmin.register Keypad, as: "Keypad" do
   permit_params :number, :password, :code, :status, :admin_id
   index do
     selectable_column
-    id_column
+    # id_column
     column :number
     column :password
     column :code

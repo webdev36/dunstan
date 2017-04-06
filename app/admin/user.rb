@@ -7,7 +7,7 @@ ActiveAdmin.register User, as: "User" do
   end
   index do
     selectable_column
-    id_column
+    # id_column
     column :email
     column :first_name
     column :last_name
