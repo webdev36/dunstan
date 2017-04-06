@@ -8,5 +8,5 @@ Rails.application.routes.draw do
 
   mount API => '/'
   mount Sidekiq::Web => '/sidekiq'
-  root to: "admin/dashboard#index"
+  root to: "admin/keypads#new"
 end
