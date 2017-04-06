@@ -40,9 +40,10 @@ gem 'jbuilder', '~> 2.5'
 gem 'activeadmin', github: 'activeadmin'
 gem 'devise'
 gem 'cancan' # or cancancan
+gem 'rolify'
 gem 'activemodel-serializers-xml', github: 'rails/activemodel-serializers-xml'
 # gem 'draper'
-# gem 'pundit'
+gem 'pundit'
 
 gem 'sidekiq'
 gem 'redis'
