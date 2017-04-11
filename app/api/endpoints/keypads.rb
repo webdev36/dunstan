@@ -14,12 +14,13 @@ module Endpoints
       # POST: /api/v1/keypads/door_lock
       #   Parameters accepted
       #     token               String *
-      #     keypad_id           Integer *
+      #     keypad_code         String *
       #     open                Boolean *
       #   Results
       #     {status: 1, data: door_status}
       post :door_lock do
         user  = User.find_by_token(params[:token])
+        keypad = Keypad.find_by(code: params[:keypad_code])
         if user.present?
           keypads = user.keypads.map{|pad| pad.json_data}
           {status: 1, data: keypads}
@@ -32,11 +33,12 @@ module Endpoints
       # GET: /api/v1/keypads/door_call
       #   Parameters accepted
       #     token               String *
-      #     keypad_id           Integer *
+      #     keypad_code         String *
       #   Results
       #     {status: 1, data: door_status}
       get :door_call do
         user  = User.find_by_token(params[:token])
+        keypad = Keypad.find_by(code: params[:keypad_code])
         if user.present?
           keypads = user.keypads.map{|pad| pad.json_data}
           {status: 1, data: keypads}
@@ -49,11 +51,12 @@ module Endpoints
       # GET: /api/v1/keypads/door_bell
       #   Parameters accepted
       #     token               String *
-      #     keypad_id           Integer *
+      #     keypad_code         String *
       #   Results
       #     {status: 1, data: door_status}
       get :door_bell do
         user  = User.find_by_token(params[:token])
+        keypad = Keypad.find_by(code: params[:keypad_code])
         if user.present?
           keypads = user.keypads.map{|pad| pad.json_data}
           {status: 1, data: keypads}
@@ -66,11 +69,12 @@ module Endpoints
       # GET: /api/v1/keypads/door_picture
       #   Parameters accepted
       #     token               String *
-      #     keypad_id           Integer *
+      #     keypad_code         String *
       #   Results
       #     {status: 1, data: door_status}
       get :door_picture do
         user  = User.find_by_token(params[:token])
+        keypad = Keypad.find_by(code: params[:keypad_code])
         if user.present?
           keypads = user.keypads.map{|pad| pad.json_data}
           {status: 1, data: keypads}

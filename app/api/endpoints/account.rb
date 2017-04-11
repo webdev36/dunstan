@@ -15,7 +15,7 @@ module Endpoints
       #   Parameters accepted
       #   email               String *
       #   phone_number        String *
-      #   keypad_id           Integer *
+      #   keypad_code         String *
       #   password            String *
       # Results
       #     {status: 1, data: user_info}
@@ -24,12 +24,17 @@ module Endpoints
         if user.present?
           {status: 0, data: "This email '#{params[:email]}' is already exists."}
         else
-          user = User.create! email: params[:email],
-                    phone_number: params[:phone_number],
-                    keypad_id: params[:keypad_id],
-                    password: params[:password],
-                    password_confirmation: params[:password]
-          {status: 1, data: "Sent notification to #{params[:phone_number]}"}
+          keypad = Keypad.find_by(code:params[:keypad_code])
+          if keypad.present?
+            user = User.new(email: params[:email], phone_number: params[:phone_number], keypad_id: keypad.id, password: params[:password], password_confirmation: params[:password])
+            if user.save
+              {status: 1, data: "Sent notification to #{params[:phone_number]}"}
+            else
+              {status: 0, data: user.errors.messages}
+            end
+          else
+            {status: 0, data: "Can't find keypad"}
+          end
         end
       end
 

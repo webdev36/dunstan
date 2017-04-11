@@ -8,7 +8,7 @@
     parameters accepted
       email               String *
       phone_number        String *
-      keypad_id           Integer *
+      keypad_code         String *
       password            String *
 
       curl \
