@@ -4,5 +4,6 @@ class API < Grape::API
   format :json
 
   # load remaining API endpoints
-  mount Endpoints::Accounts  
+  mount Endpoints::Account
+  mount Endpoints::Keypads
 end

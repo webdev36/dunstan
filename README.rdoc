@@ -2,124 +2,93 @@
 
 == Accounts API
 
-==== Create account
-    POST: /api/v1/accounts/create
+==== Sign up
+    POST: /api/v1/account/sign_up
 
     parameters accepted
-      email:          String *required
-      password:       String *required minimum 6
-      phone_number:   String *required
+      email               String *
+      phone_number        String *
+      keypad_id           Integer *
+      password            String *
 
       curl \
-        -F "email=tester1@email.com" \
-        -F "password=tester1" \
-        -F "phone_number=+8613050386450" \
-        http://localhost:3000/api/v1/accounts/create
+        -F "email=tester2@email.com" \
+        -F "password=tester2" \
+        -F "phone_number=+8613050387411" \
+        -F "keypad_id=6" \
+        http://localhost:5000/api/v1/account/sign_up
       results:
-      {"status": 1, "data":"sent verification code to your phone"}
-==== Verify phone code
-  POST: /api/v1/accounts/verify
-    Parameters accepted
-      phone_number String *
-      phone_code String *
-    Results
-      {status: 1, data: {client data}}
-    curl \
-      -F "phone_number=+8613050386450" \
-      -F "phone_code=681221" \
-      http://localhost:3000/api/v1/accounts/verify
-==== Resend phone code
-POST: /api/v1/accounts/resend_phone_code
-  Parameters accepted
-    phone_number String *
-  Results
-    {status: 1, data: Message}
-    curl \
-      -F "phone_number=+8613050386450" \
-      http://localhost:3000/api/v1/accounts/resend_phone_code
+      {"status": 1, "data":"sent notification to the phone_number"}
 
-==== Destroy account API
-    POST: /api/v1/accounts/destroy
-    parameters:
-      token:      String *required
-    results:
-      return sign out and success string
+  ==== Sign in
+      POST: /api/v1/account/sign_in
 
-==== Sign In(from app's account)
+      parameters accepted
+        phone_number        String *
+        password            String *
 
-    POST: /api/v1/accounts/sign_in
+        curl \
+          -F "password=tester2" \
+          -F "phone_number=+8613050387411" \
+          http://localhost:5000/api/v1/account/sign_in
+        results:
+        {"status": 1, "data":{token: string}}
 
-    parameters accepted
-      'email'         String,      *required
-      'password'      String,      *requried
-      'device_token'  String,      *requried
-    results:
+  ==== Update Email
+      POST: /api/v1/account/update_email
 
-    curl \
-      -F "email=tester1@email.com" \
-      -F "password=tester1" \
-      http://localhost:3000/api/v1/accounts/sign_in
+      parameters accepted
+        token                   String *
+        password                String *
+        old_email               String *
+        new_email               String *
 
-====    Login API using social
-      POST: /api/v1/accounts/social_sign_in
-      parameters:
-        email:        String *required
-        token:        String *required
-        social_type:  String *required
-        device_token: String *required
-        first_name:   String
-        last_name:    String
-        photo_url:    String
+        curl \
+          -F "password=tester1" \
+          -F "token=7GbxtN9-NDcLARjE30Jfvamh9iP5NbvykhTfoSBAAZU" \
+          -F "old_email=tester1@email.com" \
+          -F "new_email=test1@email.com" \
+          http://localhost:5000/api/v1/account/update_email
+        results:
+        {status: 1, data: "Updated email successfully"}
+
+  ==== Update Password
+      POST: /api/v1/account/update_email
+
+      parameters accepted
+        token               String *
+        old_password        String *
+        new_password        String *
+
+        curl \
+          -F "token=7GbxtN9-NDcLARjE30Jfvamh9iP5NbvykhTfoSBAAZU" \
+          -F "old_password=tester1" \
+          -F "new_password=test1" \
+          http://localhost:5000/api/v1/account/update_password
+        results:
+        {status: 1, data: "Updated password successfully"}
+
+  ==== security_answer
+      POST: /api/v1/account/security_answer
+
+      parameters accepted
+        token               String *
+        question_id         Integer *
+        answer              String *
+
+        curl \
+          -F "token=7GbxtN9-NDcLARjE30Jfvamh9iP5NbvykhTfoSBAAZU" \
+          -F "question_id=2" \
+          -F "answer=Rasemeup" \
+          http://localhost:5000/api/v1/account/security_answer
+        results:
+        {status: 1, data: {answer_id: answer.id}}
+  ==== Get doors
+      GET: /api/v1/account/doors
+        Parameters accepted
+          token               String *
+        Results
+          {status: 1, data: [{id,number,code,stat},{...}}]}
 
 
-    curl \
-      -F "email=socal@email.com" \
-      -F "token=tester1tester1tester1" \
-      -F "social_type=facebook" \
-      -F "device_token=a5s4dfa3we89hsdfhxfv4gh56dfj8rty7u" \
-      -F "first_name=fname" \
-      -F "photo_url=https://avatars.githubusercontent.com/u/8333299?size=100" \
-      http://localhost:3000/api/v1/accounts/social_sign_in
-
-
-==== Sign Out
-    POST: 'api/v1/accounts/sign_out'
-
-    parameters accepted
-    'email'      String,      *required
-
-    curl \
-      -F "email=tester3@email.com" \
-      http://localhost:3000/api/v1/accounts/sign_out
-==== Setup user info
-  POST: /api/v1/accounts/setup
-    Parameters accepted
-      first_name String
-      last_name String
-      address1 String
-      address2 String
-      city  String
-      state String
-      country String
-      postalcode String
-      photo File data
-    Results
-      {status: 1, data: {client data}}
-    curl \
-      -F "token=YHCGhCFqYOkgU-cC4xcpCQ" \
-      -F "first_name=f_name" \
-      -F "last_name=l_name" \
-      -F "address1=address1" \
-      -F "address2=address2" \
-      -F "city=city" \
-      -F "state=state" \
-      -F "country=country" \
-      -F "postalcode=955487" \
-      -F "photo=@/Users/marcus/Documents/data/me1.jpg" \
-      http://localhost:3000/api/v1/accounts/setup
-==== Forgot Password
-  GET: /api/v1/accounts/forgot_password
-  parameters:
-    email:      String *required
-  results:
-    return success message
+== Keypad API

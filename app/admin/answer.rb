@@ -9,6 +9,7 @@ ActiveAdmin.register Answer, as: "Answer" do
     selectable_column
     # id_column
     column :user_id
+    column :secret_question_id
     column :answer
     actions
   end

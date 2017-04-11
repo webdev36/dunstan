@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170406143253) do
+ActiveRecord::Schema.define(version: 20170411174525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,15 @@ ActiveRecord::Schema.define(version: 20170406143253) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_keypads", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "keypad_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["keypad_id"], name: "index_user_keypads_on_keypad_id", using: :btree
+    t.index ["user_id"], name: "index_user_keypads_on_user_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "",    null: false
     t.string   "encrypted_password",     default: "",    null: false
@@ -120,4 +129,6 @@ ActiveRecord::Schema.define(version: 20170406143253) do
 
   add_foreign_key "answers", "secret_questions"
   add_foreign_key "answers", "users"
+  add_foreign_key "user_keypads", "keypads"
+  add_foreign_key "user_keypads", "users"
 end

@@ -1,4 +1,4 @@
-class InviterWorker
+class KeypadWorker
   include Sidekiq::Worker
 
   def perform(user_id, keypad_id)
