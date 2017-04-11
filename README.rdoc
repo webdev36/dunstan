@@ -20,7 +20,7 @@
       results:
       {"status": 1, "data":"sent notification to the phone_number"}
 
-  ==== Sign in
+==== Sign in
       POST: /api/v1/account/sign_in
 
       parameters accepted
@@ -34,7 +34,7 @@
         results:
         {"status": 1, "data":{token: string}}
 
-  ==== Update Email
+==== Update Email
       POST: /api/v1/account/update_email
 
       parameters accepted
@@ -52,7 +52,7 @@
         results:
         {status: 1, data: "Updated email successfully"}
 
-  ==== Update Password
+==== Update Password
       POST: /api/v1/account/update_email
 
       parameters accepted
@@ -68,13 +68,13 @@
         results:
         {status: 1, data: "Updated password successfully"}
 
-  ==== Get all security questions
+==== Get all security questions
     GET: /api/v1/account/security_questions
       Parameters accepted
       Results
         {status: 1, data: [{id, question}, {...}]}
 
-  ==== security_answer
+==== security_answer
       POST: /api/v1/account/security_answer
 
       parameters accepted
@@ -89,12 +89,11 @@
           http://localhost:5000/api/v1/account/security_answer
         results:
         {status: 1, data: {answer_id: answer.id}}
-  ==== Get doors
+==== Get doors
       GET: /api/v1/account/doors
         Parameters accepted
           token               String *
         Results
           {status: 1, data: [{id,number,code,stat},{...}}]}
-
 
 == Keypad API
