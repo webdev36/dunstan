@@ -68,6 +68,12 @@
         results:
         {status: 1, data: "Updated password successfully"}
 
+  ==== Get all security questions
+    GET: /api/v1/account/security_questions
+      Parameters accepted
+      Results
+        {status: 1, data: [{id, question}, {...}]}
+
   ==== security_answer
       POST: /api/v1/account/security_answer
 
