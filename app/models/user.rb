@@ -31,11 +31,12 @@ class User < ApplicationRecord
   # belongs_to :keypad, inverse_of: :users
   # has_many :keypads, class_name: "Keypad", foreign_key: 'admin_id'
 
-  has_many :user_keypads
+  has_many :user_keypads, dependent: :destroy
   has_many :keypads, through: :user_keypads
+  has_many :answers, dependent: :destroy
 
   validates :phone_number, presence: true, uniqueness: true
-  validates :keypad_id, presence: true, unless: :is_admin
+  # validates :keypad_id, presence: true, unless: :is_admin
 
   scope :admins, -> { where( user_type: 'admin') }
   scope :users, -> { where( user_type: 'user') }
@@ -73,7 +74,6 @@ class User < ApplicationRecord
       UserKeypad.create!(user_id:self.id, keypad_id:keypad.id)
     elsif self.keypad_id.present?
       UserKeypad.create!(user_id:self.id, keypad_id:self.keypad_id)
-      InviterWorker::perform_async(self.id, self.keypad_id)
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170411174525) do
+ActiveRecord::Schema.define(version: 20170413183451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,27 @@ ActiveRecord::Schema.define(version: 20170411174525) do
     t.datetime "updated_at",         null: false
     t.index ["secret_question_id"], name: "index_answers_on_secret_question_id", using: :btree
     t.index ["user_id"], name: "index_answers_on_user_id", using: :btree
+  end
+
+  create_table "keypad_histories", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "keypad_id"
+    t.string   "keypad_params"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["keypad_id"], name: "index_keypad_histories_on_keypad_id", using: :btree
+    t.index ["user_id"], name: "index_keypad_histories_on_user_id", using: :btree
+  end
+
+  create_table "keypad_states", force: :cascade do |t|
+    t.integer  "keypad_id"
+    t.string   "open"
+    t.string   "beell"
+    t.string   "error"
+    t.string   "power"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["keypad_id"], name: "index_keypad_states_on_keypad_id", using: :btree
   end
 
   create_table "keypads", force: :cascade do |t|
@@ -129,6 +150,9 @@ ActiveRecord::Schema.define(version: 20170411174525) do
 
   add_foreign_key "answers", "secret_questions"
   add_foreign_key "answers", "users"
+  add_foreign_key "keypad_histories", "keypads"
+  add_foreign_key "keypad_histories", "users"
+  add_foreign_key "keypad_states", "keypads"
   add_foreign_key "user_keypads", "keypads"
   add_foreign_key "user_keypads", "users"
 end

@@ -12,10 +12,10 @@
       password            String *
 
       curl \
-        -F "email=tester2@email.com" \
-        -F "password=tester2" \
+        -F "email=tester1@email.com" \
+        -F "password=asdfasdf" \
         -F "phone_number=+8613050387411" \
-        -F "keypad_id=6" \
+        -F "keypad_code=11-214" \
         http://localhost:5000/api/v1/account/sign_up
       results:
       {"status": 1, "data":"sent notification to the phone_number"}
@@ -28,8 +28,8 @@
         password            String *
 
         curl \
-          -F "password=tester2" \
-          -F "phone_number=+8613050387411" \
+          -F "password=asdfasdf" \
+          -F "phone_number=+8613050385446" \
           http://localhost:5000/api/v1/account/sign_in
         results:
         {"status": 1, "data":{token: string}}
@@ -74,7 +74,7 @@
       Results
         {status: 1, data: [{id, question}, {...}]}
 
-==== security_answer
+==== Answer
       POST: /api/v1/account/security_answer
 
       parameters accepted
@@ -95,5 +95,99 @@
           token               String *
         Results
           {status: 1, data: [{id,number,code,stat},{...}}]}
+==== Invite user
+      POST: /api/v1/account/invite
+        Parameters accepted
+          token               String *
+          phone_number        String *
+          keypad_code         String *
+      Results
+          {status: 1, data: {token:string}}
+      EX:
+      curl \
+        -F "token=Cp2rYRPsaKeLJwlgc8QbfTyiq5r66n83P0151zKCSeY" \
+        -F "phone_number=+8613050387411" \
+        -F "keypad_code=11-214" \
+        http://localhost:5000/api/v1/account/invite
 
 == Keypad API
+==== On, Off Door
+    POST: /api/v1/keypads/door_lock
+      Parameters accepted
+        token               String *
+        keypad_code         String *
+        keypad_password     String *
+        open                Boolean *
+      Results
+        {status: 1, data: door_status}
+    curl \
+      -F "token=M-io2Wq4pLv5eM74vDaOVuByZrdswlNrmKfLwNZnYek" \
+      -F "keypad_code=11-214" \
+      -F "keypad_password=asdfasdf" \
+      -F "open=true" \
+      http://localhost:5000/api/v1/keypads/door_lock
+    results:
+      {status: 1, data: {answer_id: answer.id}}
+
+==== Door bell
+    POST: /api/v1/keypads/door_bell
+      Parameters accepted
+        token               String *
+        keypad_code         String *
+        keypad_password     String *
+        bell                Boolean *
+      Results
+        {status: 1, data: door_status}
+    curl \
+      -F "token=hS3UEw4PsYzcpoCtb8vCTXqv87EmlTY59Fjbzl8zJ7I" \
+      -F "keypad_code=123" \
+      -F "keypad_password=asdfasdf" \
+      -F "bell=true" \
+      http://localhost:5000/api/v1/keypads/door_lock
+    results:
+      {status: 1, data: {answer_id: answer.id}}
+
+==== Door block
+    POST: /api/v1/keypads/door_block
+      Parameters accepted
+        token               String *
+        keypad_code         String *
+        keypad_password     String *
+        block               Boolean *
+      Results
+        {status: 1, data: door_status}
+    curl \
+      -F "token=hS3UEw4PsYzcpoCtb8vCTXqv87EmlTY59Fjbzl8zJ7I" \
+      -F "keypad_code=123" \
+      -F "keypad_password=asdfasdf" \
+      -F "block=true" \
+      http://localhost:5000/api/v1/keypads/door_lock
+    results:
+      {status: 1, data: {answer_id: answer.id}}
+
+==== Door status
+    POST: /api/v1/keypads/door_status
+      Parameters accepted
+        token               String *
+        keypad_code         String *
+        keypad_password     String *
+        status                Boolean *
+      Results
+        {status: 1, data: door_status}
+    curl \
+      -F "token=hS3UEw4PsYzcpoCtb8vCTXqv87EmlTY59Fjbzl8zJ7I" \
+      -F "keypad_code=123" \
+      -F "keypad_password=asdfasdf" \
+      -F "status=true" \
+      http://localhost:5000/api/v1/keypads/door_lock
+    results:
+      {status: 1, data: {answer_id: answer.id}}
+==== Get door picture
+    GET: /api/v1/keypads/door_picture
+      Parameters accepted
+        token               String *
+        keypad_code         String *
+        keypad_password     String *
+        view                Boolean *
+      Results
+        {status: 1, data: door_status}

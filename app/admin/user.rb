@@ -11,7 +11,7 @@ ActiveAdmin.register User, as: "User" do
     column :email
     column :first_name
     column :last_name
-    column :keypad_id
+    column :phone_number
     actions
   end
 
@@ -23,8 +23,8 @@ ActiveAdmin.register User, as: "User" do
       f.input :first_name
       f.input :last_name
       f.input :phone_number
-      # f.input :password
-      # f.input :password_confirmation
+      f.input :password
+      f.input :password_confirmation
       f.input :keypad_id, as: :select, collection: Keypad.all.map{|keypad| [keypad.number, keypad.id]}
       f.input :user_type
       # f.input :keypad_number

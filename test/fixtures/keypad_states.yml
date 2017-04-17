@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  open: MyString
+  beell: MyString
+  error: MyString
+  power: MyString
+
+two:
+  open: MyString
+  beell: MyString
+  error: MyString
+  power: MyString

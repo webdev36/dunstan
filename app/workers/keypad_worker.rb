@@ -1,15 +1,13 @@
 class KeypadWorker
   include Sidekiq::Worker
 
-  def perform(user_id, keypad_id)
-    user = User.find(user_id.to_i)
-    keypad = Keypad.find(keypad_id)
+  def perform(phone_number, keypad_code)
     @twilio_number = ENV['TWILIO_NUMBER']
     @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
-    reminder = "#{keypad.number} is your Door Code"
+    reminder = "#{keypad_code} is your Door Code"
     message = @client.account.messages.create(
       :from => @twilio_number,
-      :to => user.phone_number,
+      :to => phone_number,
       :body => reminder,
     )
   end

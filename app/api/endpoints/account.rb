@@ -6,8 +6,12 @@ module Endpoints
       # Accounts API test
       # /api/v1/account/ping
       # results  'working now'
+      params do
+        requires :token, type: String, desc: "Access token"
+      end
       get :ping do
-        { :ping => 'working now' }
+        authenticate!
+        { :ping => 'working now', user: current_user.email }
       end
 
       # Sign up
@@ -19,15 +23,23 @@ module Endpoints
       #   password            String *
       # Results
       #     {status: 1, data: user_info}
+      params do
+        requires :email,            type: String, desc: "User email"
+        requires :password,         type: String, desc: "User password"
+        requires :phone_number,     type: String, desc: "User phone number"
+        requires :keypad_code,      type: String, desc: "Keypad code"
+      end
       post :sign_up do
+        valid_phone_number!
         user = User.find_by(email: params[:email])
         if user.present?
           {status: 0, data: "This email '#{params[:email]}' is already exists."}
         else
           keypad = Keypad.find_by(code:params[:keypad_code])
           if keypad.present?
-            user = User.new(email: params[:email], phone_number: params[:phone_number], keypad_id: keypad.id, password: params[:password], password_confirmation: params[:password])
+            user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
             if user.save
+              keypad.add_user(user)
               {status: 1, data: "Sent notification to #{params[:phone_number]}"}
             else
               {status: 0, data: user.errors.messages}
@@ -45,7 +57,12 @@ module Endpoints
       #   password            String *
       # Results
       #     {status: 1, data: {token:string}}
+      params do
+        requires :phone_number,   type: String, desc: "user phone number"
+        requires :password,       type: String, desc: "user password"
+      end
       post :sign_in do
+        valid_phone_number!
         user = User.find_by(phone_number:params[:phone_number])
         if user.present?
           user.generate_token
@@ -64,11 +81,17 @@ module Endpoints
       #   new_email               String *
       # Results
       #     {status: 1, data: user_info}
+      params do
+        requires :token,      type: String, desc: "Access token"
+        requires :password,   type: String, desc: "current password"
+        requires :old_email,  type: String, desc: "current email"
+        requires :new_email,  type: String, desc: "new email"
+      end
       post :update_email do
-        user  = User.find_by_token(params[:token])
-        if user.present? and user.valid_password? params['password']
-          if user.email == params[:old_email]
-            user.update_attributes(email: params[:new_email])
+        authenticate!
+        if current_user.valid_password? params['password']
+          if current_user.email == params[:old_email]
+            current_user.update_attributes(email: params[:new_email])
             {status: 1, data: "Updated email successfully"}
           else
             {status: 0, data: "Can't find old email"}
@@ -86,18 +109,20 @@ module Endpoints
       #   new_password        String *
       # Results
       #     {status: 1, data: user_info}
+      params do
+        requires :token,        type: String, desc: "Access token"
+        requires :old_password, type: String, desc: "current password"
+        requires :new_password, type: String, desc: "new password"
+      end
       post :update_password do
-        user  = User.find_by_token(params[:token])
-        if user.present?
-          if user.valid_password? params[:old_password]
-            user.update_attributes(password: params[:new_password], password_confirmation:params[:new_password])
-            {status: 1, data: "Updated password successfully"}
-          else
-            {status: 0, data: "Dose not valid current password"}
-          end
+        authenticate!
+        if current_user.valid_password? params[:old_password]
+          current_user.update_attributes(password: params[:new_password], password_confirmation:params[:new_password])
+          {status: 1, data: "Updated password successfully"}
         else
-          {status: 0, data: "Please signin again"}
+          {status: 0, data: "Dose not valid current password"}
         end
+
       end
 
       # Get all security questions
@@ -118,11 +143,16 @@ module Endpoints
       #     answer              String *
       #   Results
       #     {status: 1, data: answer_id}
+      params do
+        requires :token,              type: String, desc: "Acess token"
+        requires :question_id,        type: Integer, desc: "question id"
+        requires :answer,             type: String, desc: "user answer"
+      end
       post :security_answer do
+        authenticate!
         question = SecretQuestion.find_by(id:params[:question_id])
-        user  = User.find_by_token(params[:token])
-        if question.present? and user.present?
-          answer = Answer.create(user_id:user.id,secret_question_id:question.id, answer:params[:answer])
+        if question.present?
+          answer = Answer.create(user_id:current_user.id,secret_question_id:question.id, answer:params[:answer])
           {status: 1, data: {answer_id: answer.id}}
         else
           {status: 0, data: "Can't find question"}
@@ -136,16 +166,46 @@ module Endpoints
       #     token               String *
       #   Results
       #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      params do
+        requires :token,            type: String, desc: "Access Token"
+      end
       get :doors do
-        user  = User.find_by_token(params[:token])
-        if user.present?
-          keypads = user.keypads.map{|pad| pad.json_data}
-          {status: 1, data: keypads}
-        else
-          {status: 0, data: "Please signin again"}
-        end
+        authenticate!
+        keypads = current_user.keypads.map{|pad| pad.json_data}
+        {status: 1, data: keypads}
       end
 
+      # Invite user
+      # POST: /api/v1/account/invite
+      #   Parameters accepted
+      #     token               String *
+      #     phone_number        String *
+      #     keypad_code         String *
+      # Results
+      #     {status: 1, data: {token:string}}
+      params do
+        requires :token,            type: String, desc: "Access token"
+        requires :phone_number,     type: String, desc: "to invite user's phone_number"
+        requires :keypad_code,      type: String, desc: "Keypad code"
+      end
+      post :invite do
+        authenticate!
+        select_keypad!
+        valid_phone_number!
+        user = User.find_by(phone_number: params[:phone_number])
+        if user.present?
+          if selected_keypad.user_keypads.find_by(user_id:user.id).present?
+            {status: 0, data: {status: "Already exists on this keypad"}}
+          else
+            selected_keypad.add_user(user)
+            {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
+          end
+        else
+          KeypadWorker::perform_async(params[:phone_number], params[:keypad_code])
+          {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
+        end
+
+      end
 
     end
   end

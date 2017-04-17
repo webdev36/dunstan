@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  keypad: one
+  keypad_params: MyString
+
+two:
+  user: two
+  keypad: two
+  keypad_params: MyString
