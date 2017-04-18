@@ -42,7 +42,8 @@ module Endpoints
             user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
             if user.save
               keypad.add_user(user).update_attributes(door_name: params[:door_name])
-              {status: 1, data: "Sent notification to #{params[:phone_number]}"}
+              user.generate_token
+              {status: 1, data: {token: user.token}}
             else
               {status: 0, data: user.errors.messages}
             end

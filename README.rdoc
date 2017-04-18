@@ -13,7 +13,7 @@
       password            String *
 
       curl \
-        -F "door_name=room1"
+        -F "door_name=room1" \
         -F "email=tester1@email.com" \
         -F "password=asdfasdf" \
         -F "phone_number=+8613050387411" \
