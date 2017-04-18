@@ -36,6 +36,7 @@ class User < ApplicationRecord
   has_many :answers, dependent: :destroy
 
   validates :phone_number, presence: true, uniqueness: true
+  validates :phone_number, phone: true
   # validates :keypad_id, presence: true, unless: :is_admin
 
   scope :admins, -> { where( user_type: 'admin') }

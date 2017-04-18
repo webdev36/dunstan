@@ -6,12 +6,14 @@
     POST: /api/v1/account/sign_up
 
     parameters accepted
+      door_name           String *
       email               String *
       phone_number        String *
       keypad_code         String *
       password            String *
 
       curl \
+        -F "door_name=room1"
         -F "email=tester1@email.com" \
         -F "password=asdfasdf" \
         -F "phone_number=+8613050387411" \

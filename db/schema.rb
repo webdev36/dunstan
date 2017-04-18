@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170413183451) do
+ActiveRecord::Schema.define(version: 20170418170057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,8 +78,11 @@ ActiveRecord::Schema.define(version: 20170413183451) do
     t.string   "beell"
     t.string   "error"
     t.string   "power"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.string   "bell",       limit: 255
+    t.string   "status",     limit: 255
+    t.string   "view",       limit: 255
     t.index ["keypad_id"], name: "index_keypad_states_on_keypad_id", using: :btree
   end
 
@@ -114,6 +117,7 @@ ActiveRecord::Schema.define(version: 20170413183451) do
     t.integer  "keypad_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "door_name"
     t.index ["keypad_id"], name: "index_user_keypads_on_keypad_id", using: :btree
     t.index ["user_id"], name: "index_user_keypads_on_user_id", using: :btree
   end

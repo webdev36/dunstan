@@ -17,6 +17,7 @@ module Endpoints
       # Sign up
       # POST: /api/v1/accounts/sign_up
       #   Parameters accepted
+      #   door_name           String *
       #   email               String *
       #   phone_number        String *
       #   keypad_code         String *
@@ -28,6 +29,7 @@ module Endpoints
         requires :password,         type: String, desc: "User password"
         requires :phone_number,     type: String, desc: "User phone number"
         requires :keypad_code,      type: String, desc: "Keypad code"
+        requires :door_name,        type: String, desc: "Door Name"
       end
       post :sign_up do
         valid_phone_number!
@@ -39,7 +41,7 @@ module Endpoints
           if keypad.present?
             user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
             if user.save
-              keypad.add_user(user)
+              keypad.add_user(user).update_attributes(door_name: params[:door_name])
               {status: 1, data: "Sent notification to #{params[:phone_number]}"}
             else
               {status: 0, data: user.errors.messages}
