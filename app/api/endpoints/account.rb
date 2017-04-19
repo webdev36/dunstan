@@ -142,24 +142,24 @@ module Endpoints
       # POST: /api/v1/account/security_answer
       #   Parameters accepted
       #     token               String *
-      #     question_id         Integer *
-      #     answer              String *
+      #     answers             JSON * , ex: [{question_id:1, answer:'yes'}, {...}]
       #   Results
       #     {status: 1, data: answer_id}
       params do
         requires :token,              type: String, desc: "Acess token"
-        requires :question_id,        type: Integer, desc: "question id"
-        requires :answer,             type: String, desc: "user answer"
+        # requires :answers, type: Array
       end
       post :security_answer do
         authenticate!
-        question = SecretQuestion.find_by(id:params[:question_id])
-        if question.present?
-          answer = Answer.create(user_id:current_user.id,secret_question_id:question.id, answer:params[:answer])
-          {status: 1, data: {answer_id: answer.id}}
-        else
-          {status: 0, data: "Can't find question"}
+        answers = JSON.parse(params[:answers])
+        answers.each do |item|
+          p ">>>>>>#{item['question_id']}"
+          question = SecretQuestion.find_by(id:item['question_id'])
+          if question.present?
+            answer = Answer.find_or_create_by(user_id:current_user.id,secret_question_id:question.id).update_attributes(answer:item['answer'])
+          end
         end
+        {status: 1, data: "Answered"}
       end
 
 

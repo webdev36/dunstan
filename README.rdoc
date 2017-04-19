@@ -85,9 +85,8 @@
         answer              String *
 
         curl \
-          -F "token=7GbxtN9-NDcLARjE30Jfvamh9iP5NbvykhTfoSBAAZU" \
-          -F "question_id=2" \
-          -F "answer=Rasemeup" \
+          -F "token=qMoSX7-6S5gTIiInRY0f4d5uutPEvSmv6-RL8eZnmDo" \
+          -F 'answers=[{"question_id":1,"answer":"test11"},{"question_id":2,"answer":"test22"}]' \
           http://localhost:5000/api/v1/account/security_answer
         results:
         {status: 1, data: {answer_id: answer.id}}
