@@ -147,13 +147,16 @@ module Endpoints
       #     {status: 1, data: answer_id}
       params do
         requires :token,              type: String, desc: "Acess token"
-        # requires :answers, type: Array
+        requires :answers,            type: Array
       end
       post :security_answer do
         authenticate!
-        answers = JSON.parse(params[:answers])
+        if params[:answers].class == String
+          answers = JSON.parse(params[:answers])
+        else
+          answers = params[:answers]
+        end
         answers.each do |item|
-          p ">>>>>>#{item['question_id']}"
           question = SecretQuestion.find_by(id:item['question_id'])
           if question.present?
             answer = Answer.find_or_create_by(user_id:current_user.id,secret_question_id:question.id).update_attributes(answer:item['answer'])
