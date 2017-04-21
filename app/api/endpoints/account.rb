@@ -166,6 +166,34 @@ module Endpoints
       end
 
 
+      # Check Answer for security question
+      # POST: /api/v1/account/check_security_answer
+      #   Parameters accepted
+      #     token               String *
+      #     answers             JSON * , ex: [{question_id:1, answer:'yes'}, {...}]
+      #   Results
+      #     {status: 1, data: answer_id}
+      params do
+        requires :token,              type: String, desc: "Acess token"
+        requires :answers,            type: Array
+      end
+      post :check_security_answer do
+        authenticate!
+        if params[:answers].class == String
+          answers = JSON.parse(params[:answers])
+        else
+          answers = params[:answers]
+        end
+        answers.each do |item|
+          answer = Answer.find_by(user_id:current_user.id,secret_question_id:item['question_id'])
+          unless answer.answer == item['answer']
+            return {status: 0, data: "Check your answers again"}
+          end
+        end
+        {status: 1, data: "Checked your secret questions and answers"}
+      end
+
+
       # Get doors
       # GET: /api/v1/account/doors
       #   Parameters accepted

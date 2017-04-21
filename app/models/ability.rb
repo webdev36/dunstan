@@ -7,9 +7,9 @@ class Ability
     if user.super_admin?
       can :manage, :all
     elsif user.employer?
-      can [:create, :read, :new], Keypad
+      can [:create, :new], Keypad
       can :read, ActiveAdmin::Page, :name => "Dashboard"
-      can :read, [User, Answer]
+      # can :read, [User, Answer]
     else
       can :read, :all
     end

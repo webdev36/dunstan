@@ -1,5 +1,10 @@
 ActiveAdmin.register Keypad, as: "Keypad" do
   permit_params :number, :password, :code, :status, :admin_id
+
+  controller do
+    
+  end
+
   index do
     selectable_column
     # id_column
