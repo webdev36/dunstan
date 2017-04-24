@@ -205,7 +205,7 @@ module Endpoints
       end
       get :doors do
         authenticate!
-        keypads = current_user.keypads.map{|pad| pad.json_data}
+        keypads = current_user.user_keypads.map{|pad| pad.json_data}
         {status: 1, data: keypads}
       end
 

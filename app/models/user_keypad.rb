@@ -6,4 +6,7 @@ class UserKeypad < ApplicationRecord
   def send_sms
     InviterWorker::perform_async(self.user_id, self.keypad_id)
   end
+  def json_data
+    {id:keypad.id, number:keypad.number, code:keypad.code, status:keypad.status, name:self.door_name}
+  end
 end
