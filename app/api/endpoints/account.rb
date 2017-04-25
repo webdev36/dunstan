@@ -35,6 +35,10 @@ module Endpoints
         valid_phone_number!
         selected_keypad = Keypad.find_by(code:params[:keypad_code])
         user = User.find_by(email: params[:email])
+        unless selected_keypad.present?
+          return {status: 0, data: "Can not find door using this keypad_code #{params[:keypad_code]}"}
+        end
+
         if user.present?
           selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
           user.generate_token
@@ -306,6 +310,28 @@ module Endpoints
         select_keypad!
         {status: 1, data: selected_keypad.status.nil? ? "false" : selected_keypad.status}
       end
+
+
+      # Delete admin door
+      # POST: /api/v1/account/delete_door
+      #   Parameters accepted
+      #     token               String *
+      #   Results
+      #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      params do
+        requires :token,            type: String, desc: "Access Token"
+        requires :keypad_code,      type: String, desc: "Access Token"
+      end
+      post :delete_door do
+        authenticate!
+        select_keypad!
+        if selected_keypad.destroy
+          {status: 1, data: "deleted"}
+        else
+          {status: 0, data: "can't delete door"}
+        end
+      end
+
 
 
     end

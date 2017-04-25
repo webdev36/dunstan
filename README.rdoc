@@ -138,6 +138,12 @@
             keypad_code         String *
           Results
             {status: 1, data: door_status}
+==== Delete admin door
+        POST: /api/v1/account/delete_door
+          Parameters accepted
+            token               String *
+          Results
+            {status: 1, data: [{id,number,code,stat},{...}}]}
 == Keypad API
 ==== On, Off Door
     POST: /api/v1/keypads/door_lock
