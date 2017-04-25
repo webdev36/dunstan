@@ -313,23 +313,28 @@ module Endpoints
 
 
       # Delete admin door
-      # POST: /api/v1/account/delete_door
+      # POST: /api/v1/account/delete_doors
       #   Parameters accepted
       #     token               String *
+      #     keypad_codes        String *
       #   Results
-      #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      #     {status: 1, data: "Deleted doors"}
       params do
         requires :token,            type: String, desc: "Access Token"
-        requires :keypad_code,      type: String, desc: "Access Token"
+        requires :keypad_codes,     type: String, desc: "Door codes"
       end
-      post :delete_door do
+      post :delete_doors do
         authenticate!
-        select_keypad!
-        if selected_keypad.destroy
-          {status: 1, data: "deleted"}
+        if params[:answers].class == String
+          codes = JSON.parse(params[:keypad_codes])
         else
-          {status: 0, data: "can't delete door"}
+          codes = params[:keypad_codes]
         end
+        codes.each do |keypad_code|
+          keypad = current_user.admin_keypads.find_by(code:keypad_code)
+          keypad.destroy if keypad.present?
+        end
+        {status: 1, data: "Deleted doors"}
       end
 
 

@@ -107,7 +107,7 @@
           token               String *
           keypad_code         String *
         Results
-          {status: 1, data: [{id,number,code,stat},{...}}]}
+          {status: 1, data: [{id, first_name, last_name, phone_number}, {...}]}
 
 ==== Invite user
       POST: /api/v1/account/invite
@@ -116,7 +116,7 @@
           phone_number        String *
           keypad_code         String *
       Results
-          {status: 1, data: {token:string}}
+          {status: 1, data: {status:"Invited user to keypad"}}
       EX:
       curl \
         -F "token=Cp2rYRPsaKeLJwlgc8QbfTyiq5r66n83P0151zKCSeY" \
@@ -138,12 +138,13 @@
             keypad_code         String *
           Results
             {status: 1, data: door_status}
-==== Delete admin door
-        POST: /api/v1/account/delete_door
+==== Delete admin doors
+        POST: /api/v1/account/delete_doors
           Parameters accepted
             token               String *
+            keypad_codes        String *
           Results
-            {status: 1, data: [{id,number,code,stat},{...}}]}
+            {status: 1, data: "Deleted doors"}
 == Keypad API
 ==== On, Off Door
     POST: /api/v1/keypads/door_lock
