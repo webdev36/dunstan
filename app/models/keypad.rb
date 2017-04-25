@@ -18,12 +18,12 @@ class Keypad < ApplicationRecord
     if user_keypad.present?
       user_keypad
     else
-      UserKeypad.create!(user_id:user.id,keypad_id:self.id)      
+      UserKeypad.create!(user_id:user.id,keypad_id:self.id)
     end
   end
 
   def json_data
-    {id:id, number:number, code:code, status:status}
+    {id:id, number:number, code:code, status: status.nil? ? "" : status}
   end
 
   # def send_sms
