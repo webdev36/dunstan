@@ -33,7 +33,7 @@ module Endpoints
       end
       post :sign_up do
         valid_phone_number!
-        select_keypad!
+        selected_keypad = Keypad.find_by(code:params[:keypad_code])
         user = User.find_by(email: params[:email])
         if user.present?
           selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
