@@ -304,7 +304,7 @@ module Endpoints
       get :door_status do
         authenticate!
         select_keypad!
-        {status: 1, data: {state:selected_keypad.json_data}}
+        {status: 1, data: selected_keypad.status.nil? ? "false" : selected_keypad.status}
       end
 
 
