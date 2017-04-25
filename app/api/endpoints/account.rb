@@ -301,7 +301,7 @@ module Endpoints
         requires :token,            type: String, desc: "Access token"
         requires :keypad_code,      type: String, desc: "Keypad Code"
       end
-      post :door_status do
+      get :door_status do
         authenticate!
         select_keypad!
         {status: 1, data: {state:selected_keypad.json_data}}
