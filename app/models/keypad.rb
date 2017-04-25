@@ -14,7 +14,7 @@ class Keypad < ApplicationRecord
   # after_create :send_sms
 
   def add_user user
-    UserKeypad.create!(user_id:user.id,keypad_id:self.id) if user.present?
+    UserKeypad.create!(user_id:user.id,keypad_id:self.id) unless UserKeypad.where(user_id:user.id, keypad_id:self.id).first.present?
   end
 
   def json_data

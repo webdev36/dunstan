@@ -33,22 +33,21 @@ module Endpoints
       end
       post :sign_up do
         valid_phone_number!
+        select_keypad!
         user = User.find_by(email: params[:email])
         if user.present?
-          {status: 0, data: "This email '#{params[:email]}' is already exists."}
+          selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
+          user.generate_token
+          {status: 1, data: {token: user.token}}
+          # {status: 0, data: "This email '#{params[:email]}' is already exists."}
         else
-          keypad = Keypad.find_by(code:params[:keypad_code])
-          if keypad.present?
-            user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
-            if user.save
-              keypad.add_user(user).update_attributes(door_name: params[:door_name])
-              user.generate_token
-              {status: 1, data: {token: user.token}}
-            else
-              {status: 0, data: user.errors.messages}
-            end
+          user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
+          if user.save
+            selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
+            user.generate_token
+            {status: 1, data: {token: user.token}}
           else
-            {status: 0, data: "Can't find keypad"}
+            {status: 0, data: user.errors.messages}
           end
         end
       end
@@ -79,28 +78,22 @@ module Endpoints
       # POST: /api/v1/account/update_email
       #   Parameters accepted
       #   token                   String *
-      #   password                String *
       #   old_email               String *
       #   new_email               String *
       # Results
       #     {status: 1, data: user_info}
       params do
         requires :token,      type: String, desc: "Access token"
-        requires :password,   type: String, desc: "current password"
         requires :old_email,  type: String, desc: "current email"
         requires :new_email,  type: String, desc: "new email"
       end
       post :update_email do
         authenticate!
-        if current_user.valid_password? params['password']
-          if current_user.email == params[:old_email]
-            current_user.update_attributes(email: params[:new_email])
-            {status: 1, data: "Updated email successfully"}
-          else
-            {status: 0, data: "Can't find old email"}
-          end
+        if current_user.email == params[:old_email]
+          current_user.update_attributes(email: params[:new_email])
+          {status: 1, data: "Updated email successfully"}
         else
-          {status: 0, data: "Please signin again"}
+          {status: 0, data: "Can't find old email"}
         end
       end
 
@@ -209,6 +202,40 @@ module Endpoints
         {status: 1, data: keypads}
       end
 
+      # Get admin doors
+      # GET: /api/v1/account/admin_doors
+      #   Parameters accepted
+      #     token               String *
+      #   Results
+      #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      params do
+        requires :token,            type: String, desc: "Access Token"
+      end
+      get :admin_doors do
+        authenticate!
+        keypads = current_user.admin_keypads.map{|pad| pad.json_data}
+        {status: 1, data: keypads}
+      end
+
+      # Get Users
+      # GET: /api/v1/account/users
+      #   Parameters accepted
+      #     token               String *
+      #     keypad_code         String *
+      #   Results
+      #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      params do
+        requires :token,            type: String, desc: "Access Token"
+        requires :keypad_code,      type: String, desc: "keypad code"
+      end
+      get :users do
+        authenticate!
+        select_keypad!
+        users = selected_keypad.users.map{|u| u.json_data}
+        {status: 1, data: users}
+      end
+
+
       # Invite user
       # POST: /api/v1/account/invite
       #   Parameters accepted
@@ -238,8 +265,48 @@ module Endpoints
           KeypadWorker::perform_async(params[:phone_number], params[:keypad_code])
           {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
         end
-
       end
+
+
+      # Delete User
+      # POST: /api/v1/account/delete_user
+      #   Parameters accepted
+      #     token               String *
+      #     keypad_code         String *
+      #     phone_number        String *
+      #   Results
+      #     {status: 1, data: [{id,number,code,stat},{...}}]}
+      params do
+        requires :token,            type: String, desc: "Access Token"
+        requires :keypad_code,      type: String, desc: "keypad code"
+        requires :phone_number,     type: String, desc: "user phone number"
+      end
+      post :delete_user do
+        authenticate!
+        select_keypad!
+        user = User.find_by(phone_number:params[:phone_number])
+        user = selected_keypad.user_keypads.find_by(user_id:user.id)
+        user.destroy if user.present?
+        {status: 1, data: "deleted user"}
+      end
+
+      # Get door status
+      # GET: /api/v1/accounts/door_status
+      #   Parameters accepted
+      #     token               String *
+      #     keypad_code         String *
+      #   Results
+      #     {status: 1, data: door_status}
+      params do
+        requires :token,            type: String, desc: "Access token"
+        requires :keypad_code,      type: String, desc: "Keypad Code"
+      end
+      post :door_status do
+        authenticate!
+        select_keypad!
+        {status: 1, data: {state:selected_keypad.json_data}}
+      end
+
 
     end
   end

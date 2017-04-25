@@ -41,12 +41,10 @@
 
       parameters accepted
         token                   String *
-        password                String *
         old_email               String *
         new_email               String *
 
         curl \
-          -F "password=tester1" \
           -F "token=7GbxtN9-NDcLARjE30Jfvamh9iP5NbvykhTfoSBAAZU" \
           -F "old_email=tester1@email.com" \
           -F "new_email=test1@email.com" \
@@ -55,7 +53,7 @@
         {status: 1, data: "Updated email successfully"}
 
 ==== Update Password
-      POST: /api/v1/account/update_email
+      POST: /api/v1/account/update_password
 
       parameters accepted
         token               String *
@@ -96,6 +94,21 @@
           token               String *
         Results
           {status: 1, data: [{id,number,code,stat,name},{...}}]}
+
+==== Get admin doors
+      GET: /api/v1/account/admin_doors
+        Parameters accepted
+          token               String *
+        Results
+          {status: 1, data: [{id,number,code,stat},{...}}]}
+==== Get Users
+      GET: /api/v1/account/users
+        Parameters accepted
+          token               String *
+          keypad_code         String *
+        Results
+          {status: 1, data: [{id,number,code,stat},{...}}]}
+
 ==== Invite user
       POST: /api/v1/account/invite
         Parameters accepted
@@ -110,7 +123,21 @@
         -F "phone_number=+8613050387411" \
         -F "keypad_code=11-214" \
         http://localhost:5000/api/v1/account/invite
-
+==== Delete User
+      POST: /api/v1/account/delete_user
+        Parameters accepted
+          token               String *
+          keypad_code         String *
+          phone_number        String *
+        Results
+          {status: 1, data: [{id,number,code,stat},{...}}]}
+==== Get door status
+        GET: /api/v1/accounts/door_status
+          Parameters accepted
+            token               String *
+            keypad_code         String *
+          Results
+            {status: 1, data: door_status}
 == Keypad API
 ==== On, Off Door
     POST: /api/v1/keypads/door_lock

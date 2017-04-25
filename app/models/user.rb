@@ -29,7 +29,7 @@ class User < ApplicationRecord
   # attr_accessor :password, :password_confirmation
 
   # belongs_to :keypad, inverse_of: :users
-  # has_many :keypads, class_name: "Keypad", foreign_key: 'admin_id'
+  has_many :admin_keypads, class_name: "Keypad", foreign_key: 'admin_id'
 
   has_many :user_keypads, dependent: :destroy
   has_many :keypads, through: :user_keypads
@@ -72,7 +72,7 @@ class User < ApplicationRecord
       keypad = Keypad.find_or_create_by(number:self.keypad_number, code:self.keypad_code, password:self.keypad_password)
       keypad.admin_id = self.id
       keypad.save
-      UserKeypad.create!(user_id:self.id, keypad_id:keypad.id)
+      # UserKeypad.create!(user_id:self.id, keypad_id:keypad.id)
     elsif self.keypad_id.present?
       UserKeypad.create!(user_id:self.id, keypad_id:self.keypad_id)
     end
