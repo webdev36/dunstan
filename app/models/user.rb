@@ -53,7 +53,7 @@ class User < ApplicationRecord
   end
 
   def json_data
-    {id: id, first_name: first_name, last_name: last_name, phone_number: phone_number}
+    {id: id, first_name: first_name.nil? ? "" : first_name, last_name: last_name.nil? ? "" : last_name, phone_number: phone_number}
   end
 
   def generate_token
