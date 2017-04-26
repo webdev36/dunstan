@@ -40,9 +40,13 @@ module Endpoints
         end
 
         if user.present?
-          selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
-          user.generate_token
-          {status: 1, data: {token: user.token}}
+          if user.valid_password?(params[:password])
+            selected_keypad.add_user(user).update_attributes(door_name: params[:door_name])
+            user.generate_token
+            {status: 1, data: {token: user.token}}
+          else
+            {status: 0, data: "Invalid password"}
+          end
           # {status: 0, data: "This email '#{params[:email]}' is already exists."}
         else
           user = User.new(email: params[:email], phone_number: params[:phone_number], password: params[:password], password_confirmation: params[:password])
@@ -243,13 +247,18 @@ module Endpoints
       #   Parameters accepted
       #     token               String *
       #     phone_number        String *
+      #     email               String *
+      #     first_name          String *
+      #     last_name           String *
       #     keypad_code         String *
       # Results
-      #     {status: 1, data: {token:string}}
+      #     {status: 1, data: successfully invited user}
       params do
         requires :token,            type: String, desc: "Access token"
         requires :phone_number,     type: String, desc: "to invite user's phone_number"
         requires :keypad_code,      type: String, desc: "Keypad code"
+        requires :email,            type: String, desc: "User Email"
+        requires :first_name,      type: String, desc: "First name"
       end
       post :invite do
         authenticate!
@@ -261,11 +270,18 @@ module Endpoints
             {status: 0, data: {status: "Already exists on this keypad"}}
           else
             selected_keypad.add_user(user)
-            {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
+            {status: 1, data: {status:"Added user to keypad #{selected_keypad.code}"}}
           end
         else
-          KeypadWorker::perform_async(params[:phone_number], params[:keypad_code])
-          {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
+          password = 8.times.map{ Random.rand(10) }.join()
+          user = User.new(phone_number:params[:phone_number],email:params[:email],first_name:params[:first_name],last_name:params[:last_name],password:password,password_confirmation:password)
+          if user.save
+            selected_keypad.add_user(user)
+            KeypadWorker::perform_async(params[:phone_number], params[:keypad_code], password)
+            {status: 1, data: {status:"Invited user to keypad #{selected_keypad.code}"}}
+          else
+            {status: 0, data: user.errors.messages}
+          end
         end
       end
 

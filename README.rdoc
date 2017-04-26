@@ -110,18 +110,25 @@
           {status: 1, data: [{id, first_name, last_name, phone_number}, {...}]}
 
 ==== Invite user
-      POST: /api/v1/account/invite
-        Parameters accepted
-          token               String *
-          phone_number        String *
-          keypad_code         String *
-      Results
-          {status: 1, data: {status:"Invited user to keypad"}}
+        Invite user
+        POST: /api/v1/account/invite
+          Parameters accepted
+            token               String *
+            phone_number        String *
+            email               String *
+            first_name          String *
+            last_name           String *
+            keypad_code         String *
+        Results
+            {status: 1, data: successfully invited user}
       EX:
       curl \
-        -F "token=Cp2rYRPsaKeLJwlgc8QbfTyiq5r66n83P0151zKCSeY" \
-        -F "phone_number=+8613050387411" \
+        -F "token=M-io2Wq4pLv5eM74vDaOVuByZrdswlNrmKfLwNZnYek" \
+        -F "phone_number=+8613050387422" \
         -F "keypad_code=11-214" \
+        -F "email=tester3@email.com" \
+        -F "first_name=Tester" \
+        -F "last_name=tester3" \
         http://localhost:5000/api/v1/account/invite
 ==== Delete User
       POST: /api/v1/account/delete_user
