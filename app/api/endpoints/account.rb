@@ -225,17 +225,15 @@ module Endpoints
       # GET: /api/v1/account/users
       #   Parameters accepted
       #     token               String *
-      #     keypad_code         String *
       #   Results
       #     {status: 1, data: [{id,number,code,stat},{...}}]}
       params do
         requires :token,            type: String, desc: "Access Token"
-        requires :keypad_code,      type: String, desc: "keypad code"
+        # requires :keypad_code,      type: String, desc: "keypad code"
       end
       get :users do
         authenticate!
-        select_keypad!
-        users = selected_keypad.users.map{|u| u.json_data}
+        users = UserKeypad.joins("LEFT JOIN keypads ON user_keypads.keypad_id=keypads.id and keypads.admin_id=#{current_user.id}").map{|uk| uk.user.json_data}
         {status: 1, data: users}
       end
 
