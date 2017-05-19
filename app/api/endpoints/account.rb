@@ -75,8 +75,12 @@ module Endpoints
         valid_phone_number!
         user = User.find_by(phone_number:params[:phone_number])
         if user.present?
-          user.generate_token
-          {status: 1, data: {token:user.token}}
+          if user.valid_password? params[:password]
+            user.generate_token
+            {status: 1, data: {token:user.token}}
+          else
+            {status: 0, data: "Password did not match"}
+          end
         else
           {status: 0, data: "Can't find this user"}
         end

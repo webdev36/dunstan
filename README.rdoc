@@ -185,7 +185,7 @@
       -F "keypad_code=123" \
       -F "keypad_password=asdfasdf" \
       -F "bell=true" \
-      http://localhost:5000/api/v1/keypads/door_lock
+      http://localhost:5000/api/v1/keypads/door_bell
     results:
       {status: 1, data: {answer_id: answer.id}}
 
@@ -203,7 +203,7 @@
       -F "keypad_code=123" \
       -F "keypad_password=asdfasdf" \
       -F "block=true" \
-      http://localhost:5000/api/v1/keypads/door_lock
+      http://localhost:5000/api/v1/keypads/door_block
     results:
       {status: 1, data: {answer_id: answer.id}}
 
@@ -221,7 +221,7 @@
       -F "keypad_code=123" \
       -F "keypad_password=asdfasdf" \
       -F "status=true" \
-      http://localhost:5000/api/v1/keypads/door_lock
+      http://localhost:5000/api/v1/keypads/door_status
     results:
       {status: 1, data: {answer_id: answer.id}}
 ==== Get door picture
