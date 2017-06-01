@@ -23,7 +23,7 @@ class Keypad < ApplicationRecord
   end
 
   def json_data
-    {id:id, number:number, password: password, code:code, status: status.nil? ? "false" : status, theme_number: theme_number.nil? ? "" : theme_number,}
+    {id:id, number:number, password: password, code:code, status: status.nil? ? "false" : status, sim_number: sim_number.nil? ? "" : sim_number,}
   end
 
   # def send_sms
