@@ -1,5 +1,5 @@
 ActiveAdmin.register Keypad, as: "Keypad" do
-  permit_params :number, :password, :code, :status, :admin_id
+  permit_params :number, :password, :code, :status, :admin_id, :theme_number
 
   controller do
 
@@ -8,6 +8,7 @@ ActiveAdmin.register Keypad, as: "Keypad" do
   index do
     selectable_column
     # id_column
+    column :theme_number
     column :number
     column :password
     column :code
@@ -20,6 +21,7 @@ ActiveAdmin.register Keypad, as: "Keypad" do
 
   form do |f|
     f.inputs "Admin Details" do
+      f.input :theme_number
       f.input :number
       f.input :password
       f.input :code

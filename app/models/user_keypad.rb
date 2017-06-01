@@ -7,6 +7,12 @@ class UserKeypad < ApplicationRecord
     InviterWorker::perform_async(self.user_id, self.keypad_id)
   end
   def json_data
-    {id:keypad.id, number:keypad.number, code:keypad.code, status:keypad.status.nil? ? "false" : keypad.status, name:self.door_name.nil? ? "" : self.door_name, password:keypad.password}
+    { id: keypad.id,
+      number: keypad.number,
+      theme_number: keypad.theme_number.nil? ? "" : keypad.theme_number,
+      code: keypad.code,
+      status: keypad.status.nil? ? "false" : keypad.status,
+      name: self.door_name.nil? ? "" : self.door_name,
+      password: keypad.password }
   end
 end
